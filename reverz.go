@@ -1,6 +1,7 @@
 package reverz
 
 import (
+	"log"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -24,7 +25,10 @@ func New(conf *Config) (*Reverz, error) {
 
 // Proxy defines endpoint for redirect
 func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
-	u, _ := url.Parse(r.conf.URLs[0])
+	u, err := url.Parse(r.conf.URLs[0])
+	if err != nil {
+		log.Fatalf("unable to parse url: %v", err)
+	}
 	reverseProxy := httputil.NewSingleHostReverseProxy(u)
 	req.URL.Host = u.Host
 	req.URL.Scheme = u.Scheme
