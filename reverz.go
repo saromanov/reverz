@@ -36,10 +36,3 @@ func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
 	req.Host = u.Host
 	reverseProxy.ServeHTTP(w, req)
 }
-
-func proxy(handler http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r.Host = r.URL.Host
-		handler.ServeHTTP(w, r)
-	})
-}
