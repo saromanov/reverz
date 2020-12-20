@@ -7,19 +7,22 @@ import (
 	"github.com/saromanov/reverz"
 )
 
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
 }
 
 func main(){
-	r, _ := reverz.New(&reverz.Config{
-		URLs: []string{"localhost:8081"},
+	rev, _ := reverz.New(&reverz.Config{
+		URLs: []string{"127.0.0.1:8081"},
 	})
-	r.Run(handler)
+
+	handler := func (w http.ResponseWriter, r *http.Request) {
+		rev.Proxy(w, r)
+		fmt.Fprintf(w, "URL.Path = %q\n", r.URL.Path)
+	}
 	fmt.Println("RRRR")
 	mux := http.NewServeMux()
-	finalHandler := http.HandlerFunc(r.Run(handler))
+	finalHandler := http.HandlerFunc(handler)
   	mux.Handle("/", finalHandler)
 
   	log.Println("Listening on :3000...")

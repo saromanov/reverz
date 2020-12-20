@@ -22,12 +22,15 @@ func New(conf *Config) (*Reverz, error) {
 	}, nil
 }
 
-// Run starts of reverz
-func (r *Reverz) Run(f func(w http.ResponseWriter, r *http.Request)) func(handler http.Handler) http.Handler  {
+// Proxy defines endpoint for redirect
+func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
 	u, _ := url.Parse(r.conf.URLs[0])
 	reverseProxy := httputil.NewSingleHostReverseProxy(u)
-	reverseProxy.ServeHTTP(proxy(f))
-	return reverseProxy(method)
+	req.URL.Host = u.Host
+	req.URL.Scheme = u.Scheme
+	req.Header.Set("X-Forwarded-Host", req.Header.Get("Host"))
+	req.Host = u.Host
+	reverseProxy.ServeHTTP(w, req)
 }
 
 func proxy(handler http.Handler) http.Handler {
