@@ -11,6 +11,7 @@ import (
 // Reverz defines
 type Reverz struct {
 	conf *Config
+	urls []*url.URL
 }
 
 // New provides initialization for Reverz
@@ -18,8 +19,13 @@ func New(conf *Config) (*Reverz, error) {
 	if conf == nil {
 		return nil, fmt.Errorf("config is not defined")
 	}
+	urls, err := convertURLs(conf.URLs)
+	if err != nil {
+		return nil, err
+	}
 	return &Reverz{
 		conf: conf,
+		urls: urls,
 	}, nil
 }
 
@@ -39,7 +45,7 @@ func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
 
 // convertURLs provides converting of urls from slice of strings
 // to slice of urls
-func (r *Reverz) convertURLs(rawURLs []string) ([]*url.URL, error) {
+func convertURLs(rawURLs []string) ([]*url.URL, error) {
 	urls := make([]*url.URL, len(rawURLs))
 	for _, u := range rawURLs {
 		urlResp, err := url.ParseRequestURI(u)
