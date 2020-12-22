@@ -36,3 +36,17 @@ func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
 	req.Host = u.Host
 	reverseProxy.ServeHTTP(w, req)
 }
+
+// convertURLs provides converting of urls from slice of strings
+// to slice of urls
+func (r *Reverz) convertURLs(rawURLs []string) ([]*url.URL, error) {
+	urls := make([]*url.URL, len(rawURLs))
+	for _, u := range rawURLs {
+		urlResp, err := url.ParseRequestURI(u)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse url: %v", err)
+		}
+		urls = append(urls, urlResp)
+	}
+	return urls, nil
+}
