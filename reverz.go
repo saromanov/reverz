@@ -46,6 +46,9 @@ func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
 // convertURLs provides converting of urls from slice of strings
 // to slice of urls
 func convertURLs(rawURLs []string) ([]*url.URL, error) {
+	if len(rawURLs) == 0 {
+		return nil, fmt.Errorf("urls is not defined")
+	}
 	urls := make([]*url.URL, len(rawURLs))
 	for _, u := range rawURLs {
 		urlResp, err := url.ParseRequestURI(u)
