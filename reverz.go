@@ -12,6 +12,7 @@ import (
 type Reverz struct {
 	conf *Config
 	urls []*url.URL
+	balancer Balancer
 }
 
 // New provides initialization for Reverz
@@ -26,6 +27,7 @@ func New(conf *Config) (*Reverz, error) {
 	return &Reverz{
 		conf: conf,
 		urls: urls,
+		balancer: selectBalancer(conf.Balancer, urls),
 	}, nil
 }
 
@@ -58,4 +60,12 @@ func convertURLs(rawURLs []string) ([]*url.URL, error) {
 		urls = append(urls, urlResp)
 	}
 	return urls, nil
+}
+
+// selectBalancer provides selecting of load balancer
+func selectBalancer(b string, urls []*url.URL) Balancer {
+	if b == "rr" {
+		return &RoundRobin{urls: urls}
+	}
+	return &RoundRobin{urls: urls}
 }
