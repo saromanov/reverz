@@ -10,7 +10,7 @@ type Balancer interface {
 	Next() *url.URL
 }
 
-// RoundRobin provides implementation of round robin algorithms 
+// RoundRobin provides implementation of round robin algorithms
 type RoundRobin struct {
 	urls []*url.URL
 	next uint32

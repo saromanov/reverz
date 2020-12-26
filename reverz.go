@@ -9,8 +9,8 @@ import (
 
 // Reverz defines
 type Reverz struct {
-	conf *Config
-	urls []*url.URL
+	conf     *Config
+	urls     []*url.URL
 	balancer Balancer
 }
 
@@ -24,14 +24,14 @@ func New(conf *Config) (*Reverz, error) {
 		return nil, err
 	}
 	return &Reverz{
-		conf: conf,
-		urls: urls,
+		conf:     conf,
+		urls:     urls,
 		balancer: selectBalancer(conf.Balancer, urls),
 	}, nil
 }
 
 // Proxy defines endpoint for redirect
-func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
+func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request) {
 	u := r.balancer.Next()
 	reverseProxy := httputil.NewSingleHostReverseProxy(u)
 	req.URL.Host = u.Host
