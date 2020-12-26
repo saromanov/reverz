@@ -14,7 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main(){
 	rev, _ := reverz.New(&reverz.Config{
-		URLs: []string{"http://127.0.0.1:8081"},
+		URLs: []string{"http://127.0.0.1:8081", "http://127.0.0.1:8083"},
 	})
 
 	handler := func (w http.ResponseWriter, r *http.Request) {

@@ -1,6 +1,7 @@
 package reverz
 
 import (
+	"fmt"
 	"net/url"
 	"sync/atomic"
 )

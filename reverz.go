@@ -1,7 +1,6 @@
 package reverz
 
 import (
-	"log"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -33,10 +32,7 @@ func New(conf *Config) (*Reverz, error) {
 
 // Proxy defines endpoint for redirect
 func (r *Reverz) Proxy(w http.ResponseWriter, req *http.Request)  {
-	u, err := url.Parse(r.conf.URLs[0])
-	if err != nil {
-		log.Fatalf("unable to parse url: %v", err)
-	}
+	u := r.balancer.Next()
 	reverseProxy := httputil.NewSingleHostReverseProxy(u)
 	req.URL.Host = u.Host
 	req.URL.Scheme = u.Scheme
@@ -52,12 +48,12 @@ func convertURLs(rawURLs []string) ([]*url.URL, error) {
 		return nil, fmt.Errorf("urls is not defined")
 	}
 	urls := make([]*url.URL, len(rawURLs))
-	for _, u := range rawURLs {
+	for i, u := range rawURLs {
 		urlResp, err := url.ParseRequestURI(u)
 		if err != nil {
 			return nil, fmt.Errorf("unable to parse url: %v", err)
 		}
-		urls = append(urls, urlResp)
+		urls[i] = urlResp
 	}
 	return urls, nil
 }
